@@ -3,10 +3,10 @@ import java.awt.*;
 
 public class PlayerView extends JPanel {
 
-    private int WIDTH = 300;
-    private int HEIGHT = 200;
+    private int WIDTH = 600;
+    private int HEIGHT = 300;
     private Dice dice;
-    private String message = "Hello";
+    private String message = "주사위나라에 오신 것을 환영합니다. 창이 겹쳐 있으니 주의해주세요.";
     private int dice1_num = 0;
     private int dice2_num = 0;
 
@@ -29,7 +29,20 @@ public class PlayerView extends JPanel {
         g.drawString(Integer.toString(dice2_num), margin_left + 20, margin_top + 20);
     }
 
-    public void paintComponents(Graphics g) {
+    private void drawRules(Graphics g, int x, int y){
+        g.drawString("규칙", x, y);
+        y = y + 20;
+        x = x - 10;
+        g.drawString("- 주사위 두개가 같은 수가 나오면 이긴다. 둘 다 같은 수이면 큰 수가 이긴다.", x, y);
+        y = y + 15;
+        g.drawString("- 다른 수 끼리는 두 주사위의 합이 크면 이긴다.", x, y);
+        y = y + 15;
+        g.drawString("- 합이 동률인 경우에는 두 수의 차이가 작으면 이긴다.", x, y);
+        y = y + 15;
+        g.drawString("- 두수의 차이도 동률이면 비긴다.", x, y);
+    }
+
+    public void paintComponent(Graphics g) {
         System.out.println("paintComponents Called");
         g.setColor(Color.white);
         g.fillRect(0, 0, WIDTH, HEIGHT);
@@ -38,7 +51,7 @@ public class PlayerView extends JPanel {
         g.drawString(message, margin_left, margin_top);
         drawDice(g, margin_left, margin_top + 20, dice1_num);
         drawDice(g, margin_left + 20, margin_top + 20, dice2_num);
-
+        drawRules(g, margin_left, margin_top + 50);
 
     }
 

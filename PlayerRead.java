@@ -6,7 +6,7 @@ public class PlayerRead {
     private int number = 0;
     private String tmp;
 
-    public String putUserName(int n){
+    public String readUserName(int n){
         tmp = "player" + n + "의 이름을 입력해주세요.";
         return JOptionPane.showInputDialog(tmp);
     }

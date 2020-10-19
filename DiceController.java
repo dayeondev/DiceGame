@@ -9,6 +9,8 @@ public class DiceController{
     private int round2_p1 = 0;
     private int round2_p2 = 0;
 
+    private char command;
+
     public DiceController(PlayerRead _reader, Dice _dice,
                           PlayerView _view_p1, PlayerView _view_p2){
         reader = _reader;
@@ -24,6 +26,10 @@ public class DiceController{
         round2_p1 = 0;
         round2_p2 = 0;
 
+        view_p1.showDices(round1_p1, round2_p1);
+        view_p2.showDices(round1_p2, round2_p2);
+        view_p1.showMessage("초기화되었습니다.");
+        view_p2.showMessage("초기화되었습니다.");
     }
 
 
@@ -68,7 +74,7 @@ public class DiceController{
         }   // 1에 대한 처리 끝
 
         else if((_round1_p1 + _round2_p1) != (_round1_p2 + _round2_p2)){ // P1과 P2의 합이 다름
-            if((_round1_p1 + _round2_p1) > (_round1_p1 + _round2_p2)){ // P1의 합이 P2의 합보다 큼
+            if((_round1_p1 + _round2_p1) > (_round1_p2 + _round2_p2)){ // P1의 합이 P2의 합보다 큼
                 // P1이 이김
                 message = "P1 승. P1의 합이 P2의 합보다 큽니다.";
             }
@@ -105,58 +111,63 @@ public class DiceController{
                 message = "지정되지 않은 결과입니다. 관리자에게 연락해주세요.";
             }
         }
-        view_p1.showMessage(message);
-        view_p2.showMessage(message);
+        view_p1.showMessage(message + " 다시 시작하려면 R을 입력해주세요.");
+        view_p2.showMessage(message + " 다시 시작하려면 R을 입력해주세요.");
 
 
     }
 
     public void playGame(){
         int number = 0;
-        char command = Character.toUpperCase(reader.readCommand("player1던지기 P1, player2던지기 P2"));
-        System.out.println("커맨드 입력됨. command: " + command);
+
+//        System.out.println("커맨드 입력됨. command: " + command);
+        System.out.println("11: " + round1_p1 + ", 21: " + round2_p1 + ", 12: " + round1_p2 + ", 22: " + round2_p2);
         boolean end = (round1_p1!=0) && (round1_p2!=0) && (round2_p1!=0) && (round2_p2!=0);
         if(end){
-            System.out.println("here");
+//            System.out.println("here");
             victory(round1_p1, round1_p2, round2_p1, round2_p2);
+            round1_p1 = 0;
+            round2_p1 = 0;
+            round1_p2 = 0;
+            round2_p2 = 0;
         }
-        else if(command == 'P'){
-            number = reader.readNumber();
-            if(number == 1){
-                if(round1_p1 == 0) {
-                    round1_p1 = dice.throwDice();
-                    view_p1.showMessage("주사위1");
+        else {
+            command = Character.toUpperCase(reader.readCommand("player1던지기 P1, player2던지기 P2, 다시하기 R"));
+            if (command == 'P') {
+                number = reader.readNumber();
+                if (number == 1) {
+                    if (round1_p1 == 0) {
+                        round1_p1 = dice.throwDice();
+                        view_p1.showMessage("주사위1");
+                        view_p1.showDices(round1_p1, 0);
+                    } else if (round2_p1 == 0) {
+                        round2_p1 = dice.throwDice();
+                        view_p1.showMessage("주사위2");
+                        view_p1.showDices(round1_p1, round2_p1);
+                    } else {
+                        view_p1.showMessage("이미 모든 주사위를 던졌습니다.");
+                    }
+                } else if (number == 2) {
+                    if (round1_p2 == 0) {
+                        round1_p2 = dice.throwDice();
+                        view_p2.showMessage("주사위1");
+                        view_p2.showDices(round1_p2, 0);
+                    } else if (round2_p2 == 0) {
+                        round2_p2 = dice.throwDice();
+                        view_p2.showMessage("주사위2");
+                        view_p2.showDices(round1_p2, round2_p2);
+                    } else {
+                        view_p2.showMessage("이미 모든 주사위를 던졌습니다.");
+                    }
+                } else {
+                    view_p1.showAlert("입력값에 문제가 있습니다.");
                 }
-                else if(round2_p1 == 0){
-                    round2_p1 = dice.throwDice();
-                    view_p1.showMessage("주사위2");
-                }
-                else{
-                    view_p1.showMessage("이미 모든 주사위를 던졌습니다.");
-                }
+            } else if (command == 'R') {
+                reset();
             }
-            else if(number == 2){
-                if(round1_p2 == 0) {
-                    round1_p2 = dice.throwDice();
-                    view_p2.showMessage("주사위1");
-                }
-                else if(round2_p2 == 0){
-                    round2_p2 = dice.throwDice();
-                    view_p2.showMessage("주사위2");
-                }
-                else{
-                    view_p2.showMessage("이미 모든 주사위를 던졌습니다.");
-                }
-            }
-            else{
-                view_p1.showAlert("입력값에 문제가 있습니다.");
-            }
-        }
-        else if(command == 'R'){
-            reset();
+
         }
         this.playGame();
-
 
     }
 
